@@ -2,40 +2,56 @@ version: 2
 
 models:
   - name: customers
-    description: One record per customer
+    description: "This model represents a customer's lifetime value and order history. It combines customer data with order data to create a single view of each customer."
     columns:
       - name: customer_id
-        description: Primary key
+        description: "The unique identifier for a customer."
         tests:
           - unique
           - not_null
+      - name: first_name
+        description: "The customer's first name."
+      - name: last_name
+        description: "The customer's last name."
       - name: first_order_date
-        description: NULL when a customer has not yet placed an order.
+        description: "The date of the customer's first order. This is NULL if the customer has not placed any orders."
+      - name: most_recent_order_date
+        description: "The date of the customer's most recent order. This is NULL if the customer has not placed any orders."
+      - name: number_of_orders
+        description: "The total number of orders placed by the customer."
 
   - name: stg_customers
-    description: This model cleans up customer data
+    description: "This model represents individual customers for the jaffle shop. It cleans and standardizes customer data from the source."
     columns:
       - name: customer_id
-        description: Primary key
+        description: "The unique identifier for a customer."
         tests:
           - unique
           - not_null
+      - name: first_name
+        description: "The customer's first name."
+      - name: last_name
+        description: "The customer's last name."
 
   - name: stg_orders
-    description: This model cleans up order data
+    description: "This model represents individual orders from the jaffle shop. It cleans and standardizes order data from the source."
     columns:
       - name: order_id
-        description: Primary key
+        description: "The unique identifier for an order."
         tests:
           - unique
           - not_null
       - name: status
+        description: "The current status of the order."
         tests:
           - accepted_values:
               values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
       - name: customer_id
+        description: "The ID of the customer who placed the order."
         tests:
           - not_null
           - relationships:
               to: ref('stg_customers')
               field: customer_id
+      - name: order_date
+        description: "The date when the order was placed."
